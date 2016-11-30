@@ -8,6 +8,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+
+	"google.golang.org/appengine/urlfetch"
 )
 
 const (
@@ -117,7 +119,7 @@ func (this *FcmClient) GetInfo(withDetails bool, instanceIdToken string) (*Insta
 		return nil, err
 	}
 
-	client := &http.Client{}
+	client := urlfetch.Client(this.Ctx)
 	response, err := client.Do(request)
 	if err != nil {
 		return nil, err
@@ -188,7 +190,7 @@ func (this *FcmClient) SubscribeToTopic(instanceIdToken string, topic string) (*
 		return nil, err
 	}
 
-	client := &http.Client{}
+	client := urlfetch.Client(this.Ctx)
 	response, err := client.Do(request)
 	if err != nil {
 		return nil, err
@@ -260,7 +262,7 @@ func (this *FcmClient) BatchSubscribeToTopic(tokens []string, topic string) (*Ba
 		fmt.Println(err)
 	}
 
-	client := &http.Client{}
+	client := urlfetch.Client(this.Ctx)
 	response, err := client.Do(request)
 	if err != nil {
 		fmt.Println(err)
@@ -302,7 +304,7 @@ func (this *FcmClient) BatchUnsubscribeFromTopic(tokens []string, topic string) 
 		fmt.Println(err)
 	}
 
-	client := &http.Client{}
+	client := urlfetch.Client(this.Ctx)
 	response, err := client.Do(request)
 	if err != nil {
 		fmt.Println(err)
@@ -391,7 +393,7 @@ func (this *FcmClient) ApnsBatchImportRequest(apnsReq *ApnsBatchRequest) (*ApnsB
 		return nil, err
 	}
 
-	client := &http.Client{}
+	client := urlfetch.Client(this.Ctx)
 	response, err := client.Do(request)
 	if err != nil {
 		return nil, err

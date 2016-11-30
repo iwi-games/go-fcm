@@ -7,6 +7,10 @@ import (
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"golang.org/x/net/context"
+
+	"google.golang.org/appengine/urlfetch"
 )
 
 const (
@@ -39,6 +43,7 @@ var (
 type FcmClient struct {
 	ApiKey  string
 	Message FcmMsg
+	Ctx     context.Context
 }
 
 // FcmMsg represents fcm request message
@@ -88,10 +93,10 @@ type NotificationPayload struct {
 }
 
 // NewFcmClient init and create fcm client
-func NewFcmClient(apiKey string) *FcmClient {
+func NewFcmClient(apiKey string, ctx context.Context) *FcmClient {
 	fcmc := new(FcmClient)
 	fcmc.ApiKey = apiKey
-
+	fcmc.Ctx = ctx
 	return fcmc
 }
 
@@ -165,7 +170,7 @@ func (this *FcmClient) sendOnce() (*FcmResponseStatus, error) {
 	request.Header.Set("Authorization", this.apiKeyHeader())
 	request.Header.Set("Content-Type", "application/json")
 
-	client := &http.Client{}
+	client := urlfetch.Client(this.Ctx)
 	response, err := client.Do(request)
 
 	if err != nil {
